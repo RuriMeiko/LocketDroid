@@ -1,8 +1,12 @@
 package com.locket.droid
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContent
@@ -19,6 +23,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +37,7 @@ import com.locket.droid.ui.LocketColors
 import com.locket.droid.ui.LocketTheme
 import com.locket.droid.ui.OnboardingScreen
 import com.locket.droid.camera.CameraViewModel
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 enum class LocketScreen {
@@ -61,6 +67,19 @@ fun LocketMainFlow() {
     var currentScreen by remember { mutableStateOf(LocketScreen.Camera) }
     var showFriendsSheet by remember { mutableStateOf(false) }
     var showOnboarding by remember { mutableStateOf(false) }
+
+    // Runtime camera permission (máy thật phải tự xin)
+    val context = androidx.compose.ui.platform.LocalContext.current
+    var hasCameraPermission by remember { mutableStateOf(false) }
+    val permissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { granted -> hasCameraPermission = granted }
+    LaunchedEffect(Unit) {
+        hasCameraPermission = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+        if (!hasCameraPermission) permissionLauncher.launch(Manifest.permission.CAMERA)
+    }
 
     // System back button handling
     BackHandler(enabled = showOnboarding || showFriendsSheet || currentScreen != LocketScreen.Camera) {
@@ -114,7 +133,7 @@ fun LocketMainFlow() {
             when (screen) {
                 LocketScreen.Camera -> {
                     val cameraVm: CameraViewModel = viewModel()
-                    CameraScreen(
+                    if (hasCameraPermission) CameraScreen(
                         viewModel = cameraVm,
                         onNavigateToFeed = { currentScreen = LocketScreen.Feed },
                         onNavigateToChat = { currentScreen = LocketScreen.Chat },
