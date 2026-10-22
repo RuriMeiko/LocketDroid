@@ -1,0 +1,21 @@
+R_DEF: Internal format may change without notice
+local
+color bg_dark
+color brand_yellow
+drawable ic_widget_locket_heart
+drawable widget_background
+drawable widget_badge_background
+id widget_icon
+id widget_image
+id widget_placeholder
+id widget_root
+id widget_sender_badge
+id widget_sender_name
+id widget_subtitle
+id widget_title
+layout widget_locket_photo
+mipmap ic_launcher
+string app_name
+string widget_description
+style Theme.LocketDroid
+xml locket_widget_info

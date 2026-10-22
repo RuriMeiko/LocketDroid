@@ -1,0 +1,4 @@
+#Thu Oct 22 09:50:26 ICT 2026
+base.0=/home/rurimeiko/locket-android/LocketDroid/app/build/intermediates/dex/release/minifyReleaseWithR8/classes.dex
+path.0=classes.dex
+renamed.0=classes.dex

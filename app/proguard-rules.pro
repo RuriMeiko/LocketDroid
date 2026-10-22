@@ -1,0 +1,3 @@
+-keep class com.locket.droid.camera.** { *; }
+-keep class com.locket.droid.widget.** { *; }
+-dontwarn androidx.camera.**
